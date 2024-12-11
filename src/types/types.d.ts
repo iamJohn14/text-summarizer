@@ -13,3 +13,23 @@ export interface User {
   lastName: string;
   id: number;
 }
+
+export interface ViewStore {
+  selectedView: string;
+  setSelectedView: (view: string) => void;
+}
+
+export interface UserParameter {
+  id: number | null;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  username: string | null;
+}
+
+// Define the state structure for the store
+export interface UserStore {
+  user: UserParameter;
+  login: (userData: UserParameter) => void;
+  logout: () => void;
+}

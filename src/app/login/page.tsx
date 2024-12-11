@@ -2,17 +2,17 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { EyeIcon } from "@heroicons/react/20/solid";
-import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useUserStore } from "@/stores/userStore";
 import { User } from "@/types/types";
+import { useRouter } from "next/navigation";
 
 const LoginPage: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const router = useRouter();
   const userStore = useUserStore();
+  const router = useRouter();
 
   // Check if the user is already authenticated and redirect if true
   useEffect(() => {
@@ -40,10 +40,10 @@ const LoginPage: React.FC = () => {
       if (response.status === 200) {
         const { token, user }: { token: string; user: User } = response.data;
 
-        // Store the token in cookies (or localStorage/sessionStorage)
+        // Store the token in cookies with secure flags
         document.cookie = `token=${token}; path=/; max-age=${
           60 * 60 * 24 * 7
-        };`;
+        }; HttpOnly; Secure; SameSite=Lax`;
 
         // Update the store with the user data
         userStore.login({

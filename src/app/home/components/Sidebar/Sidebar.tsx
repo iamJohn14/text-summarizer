@@ -1,15 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { useUserStore } from "@/stores/userStore";
+import { useViewStore } from "@/stores/viewStore";
 import Image from "next/image";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const Sidebar = () => {
   const userStore = useUserStore();
   const account = userStore.user;
+  const router = useRouter();
 
-  const [activeItem, setActiveItem] = useState<string>("");
+  const { selectedView, setSelectedView } = useViewStore();
+
+  useEffect(() => {
+    if (account.id === null) {
+      router.push("/login");
+    }
+  }, [router, account.id]);
+
+  useEffect(() => {
+    setSelectedView("home");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleItemClick = (item: string) => {
-    setActiveItem(item);
+    setSelectedView(item);
   };
 
   const initials =
@@ -19,11 +34,25 @@ const Sidebar = () => {
       : "";
 
   // Handle logout click
-  const handleLogout = () => {
-    console.log("User logged out");
-    // Add your logout logic here (e.g., clearing user session, redirecting, etc.)
-  };
+  const handleLogout = async () => {
+    try {
+      // Call the API to log out and delete the token from cookies
+      const response = await axios.post("/api/user/logout");
 
+      if (response.status === 200) {
+        // Clear user data from the store
+        useUserStore.getState().logout();
+
+        // Optionally, clear any persisted data in localStorage or cookies
+        localStorage.removeItem("user-storage");
+
+        // Redirect the user to the login page
+        router.push("/login");
+      }
+    } catch (error) {
+      console.error("An error occurred during logout:", error);
+    }
+  };
   return (
     <div className="bg-[#14151A] h-auto sm:h-screen flex flex-col text-white p-5 sm:p-6 md:p-8">
       {/* Profile section */}
@@ -36,7 +65,9 @@ const Sidebar = () => {
             <p className="text-lg font-semibold">
               {account.firstName} {account.lastName}
             </p>
-            <p className="text-md text-gray-400">{account.email}</p>
+            <p className="text-md font-caption text-gray-400">
+              {account.email}
+            </p>
           </div>
         </div>
 
@@ -61,7 +92,7 @@ const Sidebar = () => {
         {/* Home section with logo on the left */}
         <div
           className={`flex items-center space-x-3 cursor-pointer ${
-            activeItem === "home" ? "bg-gray-700" : ""
+            selectedView === "home" ? "bg-gray-700" : ""
           } hover:bg-gray-600 rounded-md p-2 transition-all`}
           onClick={() => handleItemClick("home")}
         >
@@ -72,7 +103,7 @@ const Sidebar = () => {
         {/* History section with logo on the left */}
         <div
           className={`flex items-center space-x-3 cursor-pointer ${
-            activeItem === "history" ? "bg-gray-700" : ""
+            selectedView === "history" ? "bg-gray-700" : ""
           } hover:bg-gray-600 rounded-md p-2 transition-all`}
           onClick={() => handleItemClick("history")}
         >
