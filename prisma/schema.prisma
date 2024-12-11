@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Define the "User" model
+model User {
+  id        Int       @id @default(autoincrement()) // auto-incrementing ID for each user
+  username  String    @unique // Ensure usernames are unique
+  password  String    // The user's password
+  firstName String    // User's first name
+  lastName  String    // User's last name
+  email     String    @unique // Ensure email is unique
+  createdAt DateTime  @default(now()) // Automatically set the creation time
+  updatedAt DateTime  @updatedAt // Automatically updated whenever the record is modified
+}
+
+// Define the "Summary" model for your summarizer feature
+model Summary {
+  id        Int      @id @default(autoincrement())
+  content   String   // Original text to be summarized
+  summary   String   // The summarized text generated
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+}
