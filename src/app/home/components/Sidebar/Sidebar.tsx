@@ -54,7 +54,7 @@ const Sidebar = () => {
     }
   };
   return (
-    <div className="bg-[#14151A] h-auto sm:h-screen flex flex-col text-white p-5 sm:p-6 md:p-8">
+    <div className="bg-[#14151A] h-auto md:h-screen flex flex-col text-white p-5 md:p-6">
       {/* Profile section */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
@@ -65,7 +65,7 @@ const Sidebar = () => {
             <p className="text-lg font-semibold">
               {account.firstName} {account.lastName}
             </p>
-            <p className="text-md font-caption text-gray-400">
+            <p className="text-md font-caption text-gray-500">
               {account.email}
             </p>
           </div>
@@ -114,7 +114,9 @@ const Sidebar = () => {
             height={24}
           />
           <span className={`text-xl`}>History</span>
-          <span className={`bg-blue-500 text-white text-xs px-2 rounded-full}`}>
+          <span
+            className={`bg-[#3368F04D] bg-opacity-30 border border-[#FFFFFF24] rounded-md text-white px-2 text-xl}`}
+          >
             15
           </span>
         </div>

@@ -63,7 +63,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="bg-gray-100 h-screen flex justify-center items-center">
-      <div className="bg-white p-10 rounded-lg shadow-lg w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
+      <div className="bg-white p-10 rounded-lg shadow-lg w-full max-w-xs md:max-w-sm lg:max-w-lg xl:max-w-xl">
         <div className="text-center">
           <div className="mb-6">
             <Image
@@ -76,7 +76,7 @@ const LoginPage: React.FC = () => {
             />
           </div>
 
-          <h1 className="text-2xl font-semibold text-gray-900 mb-4">
+          <h1 className="text-2xl font-semibold mb-4">
             Log in to Undetectable AI
           </h1>
           <p className="font-caption text-gray-500 text-xl mb-6">
@@ -91,7 +91,7 @@ const LoginPage: React.FC = () => {
                 id="username"
                 name="username"
                 placeholder="Username"
-                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="mt-1 block w-full px-4 py-2 border border-[#DEE0E3] rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -106,7 +106,7 @@ const LoginPage: React.FC = () => {
                   id="password"
                   name="password"
                   placeholder="Password"
-                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="mt-1 block w-full px-4 py-2 border border-[#DEE0E3] rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

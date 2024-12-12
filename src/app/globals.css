@@ -18,6 +18,25 @@
   }
 }
 
+/* Custom scrollbar for the textarea */
+.textarea-custom::-webkit-scrollbar {
+  width: 8px; /* Adjust the width of the scrollbar */
+}
+
+.textarea-custom::-webkit-scrollbar-track {
+  background: transparent; /* Make track transparent */
+}
+
+.textarea-custom::-webkit-scrollbar-thumb {
+  background: black; /* Black color for the scrollbar thumb */
+  border-radius: 10px; /* Rounded edges for the scrollbar thumb */
+  cursor: pointer;
+}
+
+.textarea-custom::-webkit-scrollbar-thumb:hover {
+  background: #333; /* Darken thumb color on hover */
+}
+
 body {
   color: #14151a;
   background: var(--background);
