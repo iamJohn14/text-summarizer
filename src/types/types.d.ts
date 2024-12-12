@@ -27,9 +27,16 @@ export interface UserParameter {
   username: string | null;
 }
 
-// Define the state structure for the store
 export interface UserStore {
   user: UserParameter;
   login: (userData: UserParameter) => void;
   logout: () => void;
+}
+
+export interface HistoryEntry {
+  content: string;
+  summary: string;
+  createdAt: string;
+  wordCount: number;
+  charCount: number;
 }

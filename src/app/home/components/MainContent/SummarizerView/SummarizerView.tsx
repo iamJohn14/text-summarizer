@@ -93,7 +93,7 @@ const SummarizerView = () => {
   return (
     <div className="p-10 md:p-14 space-y-4">
       <div className="text-4xl font-bold">Text Summarizer</div>
-      <div className="text-lg text-gray-500">
+      <div className="text-lg text-gray-500 font-caption">
         Summarize and manage texts with ease
       </div>
       {/* Input Content Section */}
