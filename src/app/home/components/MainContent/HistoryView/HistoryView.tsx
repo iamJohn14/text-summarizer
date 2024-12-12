@@ -32,6 +32,7 @@ const HistoryView: React.FC = () => {
                 alt="Calendar"
                 width={20}
                 height={20}
+                priority
               />
             }
           >

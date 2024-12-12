@@ -31,7 +31,7 @@ export async function getSummariesByUser(userId: number, startDate?: Date) {
   const summaries = await prisma.summary.findMany({
     where: filters,
     include: {
-      user: true, // Include user data in the result
+      user: true, // Fetch the related user data
     },
   });
   return summaries;
@@ -69,10 +69,6 @@ export async function updateSummary(
 
 // Delete a summary by id
 export async function deleteSummary(id: number, userId: number) {
-  const deletedSummary = await prisma.summary.delete({
-    where: { id },
-  });
-
   // Fetch the existing summary to check the user ID
   const existingSummary = await prisma.summary.findUnique({
     where: { id },
@@ -86,6 +82,10 @@ export async function deleteSummary(id: number, userId: number) {
   if (existingSummary.userId !== userId) {
     throw new Error("You are not authorized to update this summary");
   }
+
+  const deletedSummary = await prisma.summary.delete({
+    where: { id },
+  });
 
   return deletedSummary;
 }

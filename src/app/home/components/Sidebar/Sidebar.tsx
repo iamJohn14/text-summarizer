@@ -77,8 +77,8 @@ const Sidebar = () => {
           width={45}
           height={45}
           className="cursor-pointer hover:opacity-80"
-          priority
           onClick={handleLogout}
+          priority
         />
       </div>
 
@@ -112,6 +112,7 @@ const Sidebar = () => {
             alt="History"
             width={24}
             height={24}
+            priority
           />
           <span className={`text-xl`}>History</span>
           <span

@@ -40,3 +40,8 @@ export interface HistoryEntry {
   wordCount: number;
   charCount: number;
 }
+
+export interface TokenPayload {
+  id: string;
+  username: string;
+}

@@ -31,29 +31,44 @@ export async function addUser(
 
 // Login function to authenticate the user and generate JWT
 export async function login(username: string, password: string) {
-  // Find user by username
-  const user = await prisma.user.findUnique({
-    where: { username },
-  });
+  try {
+    // Find user by username
+    const user = await prisma.user.findUnique({
+      where: { username },
+    });
 
-  if (!user) {
-    throw new Error("Invalid credentials");
+    if (!user) {
+      throw new Error("Invalid credentials");
+    }
+
+    // Validate password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new Error("Invalid credentials");
+    }
+
+    // Destructure user object to exclude password
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...userWithoutPassword } = user;
+
+    // Generate JWT token
+    const token = generateToken({
+      id: user.id.toString(),
+      username: user.username,
+    });
+
+    // Return the token and user data
+    return {
+      token,
+      user: userWithoutPassword,
+    };
+  } catch (error) {
+    console.error(
+      "Login error:",
+      error instanceof Error ? error.message : error
+    );
+    throw new Error("An error occurred during login. Please try again.");
   }
-
-  // Validate password
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
-    throw new Error("Invalid credentials");
-  }
-
-  // Destructure the user object and omit the password
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { password: _, ...userWithoutPassword } = user;
-
-  // Generate JWT token
-  const token = generateToken({ id: user.id, username: user.username });
-
-  return { token, user: userWithoutPassword };
 }
 
 // Logout function to clear user session

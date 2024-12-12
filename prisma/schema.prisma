@@ -9,7 +9,7 @@ datasource db {
 
 // Define the "User" model
 model User {
-  id        Int       @id @default(autoincrement()) // auto-incrementing ID for each user
+  id        Int       @id @default(autoincrement())
   username  String    @unique // Ensure usernames are unique
   password  String    // The user's password
   firstName String    // User's first name
@@ -17,9 +17,10 @@ model User {
   email     String    @unique // Ensure email is unique
   createdAt DateTime  @default(now()) // Automatically set the creation time
   updatedAt DateTime  @updatedAt // Automatically updated whenever the record is modified
+  summaries Summary[] // One-to-many relationship with Summary
 }
 
-// Define the "Summary" model for your summarizer feature
+// Define the "Summary" model
 model Summary {
   id        Int      @id @default(autoincrement())
   content   String   // Original text to be summarized
@@ -27,4 +28,5 @@ model Summary {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    Int
+  user      User     @relation(fields: [userId], references: [id]) // Relationship to User
 }

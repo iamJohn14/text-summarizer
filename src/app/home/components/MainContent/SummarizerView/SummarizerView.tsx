@@ -124,6 +124,7 @@ const SummarizerView = () => {
                   width={20}
                   height={20}
                   alt="enter"
+                  priority
                 />
                 <span className="mt-1">Enter Text</span>
               </button>
@@ -138,6 +139,7 @@ const SummarizerView = () => {
                   width={20}
                   height={20}
                   alt="paste"
+                  priority
                 />
                 <span className="mt-1">Paste Text</span>
               </button>
@@ -169,6 +171,7 @@ const SummarizerView = () => {
                   height={20}
                   alt="Reset"
                   className="mr-2"
+                  priority
                 />
                 Reset
               </button>
@@ -200,6 +203,7 @@ const SummarizerView = () => {
               width={50}
               height={50}
               alt="summary"
+              priority
             />
             <span className="mt-2 p-4">
               Your summarized text will appear here
