@@ -3,6 +3,7 @@ import { addSummary, getSummaries } from "@/services/summaryService";
 import { validateToken } from "@/utils/tokenUtils";
 import { getStartDateForFilter } from "@/utils/dateUtils";
 import { countChars, countWords } from "@/utils/textUtils";
+import { SummaryReturn } from "@/types/types";
 
 export async function GET(req: NextRequest) {
   try {
@@ -34,7 +35,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Fetch summaries with the constructed filters object
-    const summaries = await getSummaries(filters);
+    const summaries: SummaryReturn[] = await getSummaries(filters);
 
     const formattedSummaries = summaries.map((summary) => {
       const wordCount = countWords(summary.summary);

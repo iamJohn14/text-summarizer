@@ -81,3 +81,19 @@ export interface SummaryStore {
 export interface OptionsMenuProps {
   summary: Summary;
 }
+
+export interface SummaryReturn {
+  id: number;
+  content: string;
+  summary: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: number;
+  user: {
+    id: number;
+    username: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+  };
+}
