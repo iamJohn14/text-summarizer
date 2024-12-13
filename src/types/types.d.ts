@@ -79,5 +79,5 @@ export interface SummaryStore {
 }
 
 export interface OptionsMenuProps {
-  summary: any; // Define the type of summary as per your data
+  summary: Summary;
 }

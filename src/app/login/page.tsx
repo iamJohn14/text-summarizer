@@ -73,6 +73,7 @@ const LoginPage: React.FC = () => {
           // Store the total number of summaries
           setTotalDoc(summaries.length);
 
+          // Redirect to the home page
           router.push("/home");
         }
       }
@@ -88,8 +89,10 @@ const LoginPage: React.FC = () => {
             ? "The password that you’ve entered is incorrect. Please try again."
             : "Please check the credentials and try again.";
         openNotification("error", errorMessage, description);
+      } else {
+        console.error("Login failed:", error);
+        openNotification("error", "Login failed", "Please try again later.");
       }
-      console.error(`Invalid credentials, please try again, ${error}`);
     }
   };
 

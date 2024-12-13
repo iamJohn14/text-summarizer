@@ -1,5 +1,4 @@
 import { notification } from "antd";
-import { NotificationPlacement } from "antd/es/notification/interface";
 import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
 
 // Function to trigger the notification
