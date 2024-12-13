@@ -17,9 +17,8 @@ const SummarizerView = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
 
-  const summaryStoreState = useSummaryStore((state) => state);
-  const summaryStore = useSummaryStore();
-  const viewStoreState = useViewStore((state) => state);
+  const { forEdit, setForEdit, summaries } = useSummaryStore();
+  const { trigger } = useViewStore();
 
   // Update word and character counts whenever text changes
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -42,11 +41,7 @@ const SummarizerView = () => {
     setText("");
     setSummary("");
     setShowButtons(true);
-    setWordCount(0);
-    setCharCount(0);
-    setSummarizedWordCount(0);
-    setSummarizedCharCount(0);
-    summaryStore.setForEdit(null);
+    setForEdit(null);
   };
 
   // Function to handle summarization
@@ -91,10 +86,10 @@ const SummarizerView = () => {
   );
 
   useEffect(() => {
-    if (summaryStoreState.forEdit) {
+    if (forEdit) {
       // Find the summary with the matching ID
-      const matchingSummary = summaryStoreState.summaries.find(
-        (summary) => summary.id === summaryStoreState.forEdit
+      const matchingSummary = summaries.find(
+        (summary) => summary.id === forEdit
       );
 
       if (matchingSummary) {
@@ -125,12 +120,14 @@ const SummarizerView = () => {
 
   // Trigger when new Summarize Text button is clicked
   useEffect(() => {
-    if (viewStoreState.trigger) {
+    if (trigger) {
+      setId(null);
       setText("");
       setSummary("");
-      setShowButtons(false);
+      setShowButtons(true);
+      setForEdit(null);
     }
-  }, [viewStoreState]);
+  }, [trigger]);
 
   return (
     <div className="p-10 md:p-14 space-y-4">

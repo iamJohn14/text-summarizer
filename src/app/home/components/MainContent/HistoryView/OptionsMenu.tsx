@@ -1,26 +1,69 @@
 import { OptionsMenuProps } from "@/types/types";
-import { Menu, Dropdown } from "antd";
-import { RiFileCopy2Fill, RiEdit2Fill, RiDeleteBin2Fill } from "react-icons/ri"; // Import icons for actions
-import { SlOptions } from "react-icons/sl"; // Import icons for actions
+import { Menu, Dropdown, Modal, Button } from "antd";
+import { RiFileCopy2Fill, RiEdit2Fill, RiDeleteBin2Fill } from "react-icons/ri";
+import { SlOptions } from "react-icons/sl";
 import { openNotification } from "@/utils/notification";
 import { useSummaryStore } from "@/stores/summaryStore";
 import { useViewStore } from "@/stores/viewStore";
+import { useState } from "react";
+import axios from "axios";
 
 const OptionsMenu: React.FC<OptionsMenuProps> = ({ summary }) => {
-  const summaryStore = useSummaryStore();
-  const viewStore = useViewStore();
+  const [isModalVisible, setModalVisible] = useState<boolean>(false);
+  const { setForEdit, setTotalDoc, totalDoc, setSummaries } = useSummaryStore();
+  const { setSelectedView, filter } = useViewStore();
 
-  const onClick = (e: { key: string }) => {
+  const onClick = async (e: { key: string }) => {
     if (e.key === "copy") {
       // Copy the summary.content to clipboard
       navigator.clipboard.writeText(summary.summary);
       openNotification("success", "Copied to Clipboard!");
     } else if (e.key === "edit") {
-      summaryStore.setForEdit(summary.id);
-      viewStore.setSelectedView("home");
+      setForEdit(summary.id);
+      setSelectedView("home");
     } else if (e.key === "delete") {
-      console.log(`Deleting summary: ${summary.id}`);
+      // Show the confirmation modal
+      setModalVisible(true);
     }
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      // Call the delete API route
+      const response = await axios.delete(`/api/summary/${summary.id}`);
+
+      if (response.status === 200) {
+        openNotification("success", "Summary deleted successfully!");
+        setModalVisible(false);
+        setForEdit(null);
+        setTotalDoc(totalDoc - 1);
+
+        const response = await axios.get("/api/summary", {
+          params: { date: filter.date, search: filter.search },
+        });
+
+        if (response.status === 200) {
+          const summaries = response.data;
+
+          setSummaries({
+            summaries,
+            total: summaries.length,
+          });
+        }
+      } else {
+        // Handle any non-200 responses if necessary
+        console.error("Error deleting summary.");
+        openNotification("error", "Error deleting summary.");
+      }
+    } catch (error) {
+      console.error("An error occurred during the deletion:", error);
+      openNotification("error", "An error occurred. Please try again.");
+    }
+    setModalVisible(false);
+  };
+
+  const handleCancelDelete = () => {
+    setModalVisible(false);
   };
 
   return (
@@ -47,6 +90,64 @@ const OptionsMenu: React.FC<OptionsMenuProps> = ({ summary }) => {
           </a>
         </div>
       </Dropdown>
+
+      {/* Delete confirmation modal */}
+      <Modal
+        title="Delete summarized text?"
+        open={isModalVisible}
+        okButtonProps={{
+          style: {
+            backgroundColor: "#f44336", // Red color for delete button
+            borderColor: "#f44336", // Red border for delete button
+            color: "white", // White text
+            width: "48%", // Adjust button width to spread them out
+            height: "40px", // Adjust button height
+          },
+        }}
+        cancelButtonProps={{
+          style: {
+            borderColor: "#ddd", // Light border for cancel button
+            color: "#333", // Dark text color
+            width: "48%", // Adjust button width to spread them out
+            height: "40px", // Adjust button height
+          },
+        }}
+        centered
+        width={500} // Adjust modal width (optional, modify as needed)
+        style={{ minWidth: "300px", maxWidth: "600px" }} // Control min/max width of the modal
+        footer={
+          <div
+            style={{ display: "flex", justifyContent: "center", gap: "10px" }}
+          >
+            <Button
+              onClick={handleCancelDelete}
+              style={{
+                borderColor: "#ddd",
+                color: "#333",
+                width: "48%",
+                height: "40px",
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="primary"
+              onClick={handleConfirmDelete}
+              style={{
+                backgroundColor: "#f44336",
+                borderColor: "#f44336",
+                color: "white",
+                width: "48%",
+                height: "40px",
+              }}
+            >
+              Delete
+            </Button>
+          </div>
+        }
+      >
+        <p className="text-gray-500">You will not be able to recover it.</p>
+      </Modal>
     </div>
   );
 };

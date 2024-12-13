@@ -9,16 +9,12 @@ import { RiText } from "react-icons/ri";
 import { ImParagraphLeft } from "react-icons/im";
 import { FaCalendar } from "react-icons/fa";
 import DateRangeMenu from "./DateRangeMenu";
-import axios from "axios";
 import SearchSummary from "./SearchSummary";
 
 const HistoryView: React.FC = () => {
   // Accessing only the state of the stores
-  const summaryStoreState = useSummaryStore((state) => state);
-  const viewStoreState = useViewStore((state) => state);
-  const viewStore = useViewStore();
-  const currentPage = viewStoreState.currentPage;
-  const total = summaryStoreState.total;
+  const { summaries, total } = useSummaryStore();
+  const { currentPage, setCurrentPage } = useViewStore();
   const pageSize = 5;
 
   // Calculate start and end index for displaying entries
@@ -26,33 +22,7 @@ const HistoryView: React.FC = () => {
   const endIndex = Math.min(currentPage * pageSize, total); // Ensure it doesn't go past total
 
   // Get the summaries for the current page
-  const summariesToDisplay = summaryStoreState.summaries.slice(
-    startIndex,
-    endIndex
-  );
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get("/api/summary", {
-  //         params: { date: ">60days" },
-  //       });
-
-  //       if (response.status === 200) {
-  //         const summaries = response.data;
-
-  //         summaryStoreState.setSummaries({
-  //           summaries,
-  //           total: summaries.length,
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching summary data:", error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
+  const summariesToDisplay = summaries.slice(startIndex, endIndex);
 
   return (
     <div className="p-10 md:p-14 space-y-4 min-h-screen flex flex-col">
@@ -110,7 +80,7 @@ const HistoryView: React.FC = () => {
           current={currentPage}
           total={total}
           pageSize={pageSize}
-          onChange={(page) => viewStore.setCurrentPage(page)}
+          onChange={(page) => setCurrentPage(page)}
         />
       </div>
     </div>

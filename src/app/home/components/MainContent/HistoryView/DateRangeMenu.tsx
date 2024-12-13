@@ -7,18 +7,17 @@ import Image from "next/image";
 const { Option } = Select;
 
 const DateRangeMenu = () => {
-  const summaryStore = useSummaryStore();
-  const viewStore = useViewStore();
-  const viewStoreState = useViewStore((state) => state);
+  const { setSummaries } = useSummaryStore();
+  const { filter, setFilter } = useViewStore();
 
-  const search = viewStoreState.filter.search;
+  const search = filter.search;
 
   const handleDateRangeChange = async (value: string) => {
     const response = await axios.get("/api/summary", {
       params: { date: value, search },
     });
 
-    viewStore.setFilter({
+    setFilter({
       date: value,
       search,
     });
@@ -26,7 +25,7 @@ const DateRangeMenu = () => {
     if (response.status === 200) {
       const summaries = response.data;
 
-      summaryStore.setSummaries({
+      setSummaries({
         summaries,
         total: summaries.length,
       });

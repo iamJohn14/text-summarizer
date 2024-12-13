@@ -7,11 +7,10 @@ import { useViewStore } from "@/stores/viewStore";
 
 const SearchSummary = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const summaryStore = useSummaryStore();
-  const ViewStore = useViewStore();
-  const viewStoreState = useViewStore((state) => state);
+  const { setSummaries } = useSummaryStore();
+  const { filter, setFilter } = useViewStore();
 
-  const date = viewStoreState.filter.date;
+  const date = filter.date;
 
   // Handle search query change
   const handleSearch = async (value: string) => {
@@ -23,12 +22,12 @@ const SearchSummary = () => {
       if (response.status === 200) {
         const summaries = response.data;
 
-        summaryStore.setSummaries({
+        setSummaries({
           summaries,
           total: summaries.length,
         });
 
-        ViewStore.setFilter({
+        setFilter({
           date,
           search: value,
         });

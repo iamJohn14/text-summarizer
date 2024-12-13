@@ -7,22 +7,16 @@ import { useRouter } from "next/navigation";
 import { useSummaryStore } from "@/stores/summaryStore";
 
 const Sidebar = () => {
-  const summaryStoreState = useSummaryStore((state) => state);
-  const summaryStore = useSummaryStore();
-  const viewStore = useViewStore();
-  const userStore = useUserStore();
-  const account = userStore.user;
+  const { totalDoc, setForEdit } = useSummaryStore();
+  const { selectedView, setSelectedView, setTrigger } = useViewStore();
+  const { user } = useUserStore();
   const router = useRouter();
 
-  const { selectedView, setSelectedView } = useViewStore();
-
-  const total = summaryStoreState.totalDoc;
-
   useEffect(() => {
-    if (account.id === null) {
+    if (user.id === null) {
       router.push("/login");
     }
-  }, [router, account.id]);
+  }, [router, user.id]);
 
   useEffect(() => {
     setSelectedView("home");
@@ -34,9 +28,9 @@ const Sidebar = () => {
   };
 
   const initials =
-    account.firstName && account.lastName
-      ? account.firstName.charAt(0).toUpperCase() +
-        account.lastName.charAt(0).toUpperCase()
+    user.firstName && user.lastName
+      ? user.firstName.charAt(0).toUpperCase() +
+        user.lastName.charAt(0).toUpperCase()
       : "";
 
   // Handle logout click
@@ -63,9 +57,13 @@ const Sidebar = () => {
   };
 
   const handleSummarizeText = () => {
-    viewStore.setSelectedView("home");
-    viewStore.setTrigger(true);
-    summaryStore.setForEdit(null);
+    setSelectedView("home");
+    setTrigger(true);
+    // Immediately set trigger to false after a short delay or as per your needs
+    setTimeout(() => {
+      setTrigger(false);
+    }, 0);
+    setForEdit(null);
   };
 
   return (
@@ -78,11 +76,9 @@ const Sidebar = () => {
           </div>
           <div>
             <p className="text-lg font-semibold">
-              {account.firstName} {account.lastName}
+              {user.firstName} {user.lastName}
             </p>
-            <p className="text-md font-caption text-gray-500">
-              {account.email}
-            </p>
+            <p className="text-md font-caption text-gray-500">{user.email}</p>
           </div>
         </div>
 
@@ -136,7 +132,7 @@ const Sidebar = () => {
           <span
             className={`bg-[#3368F04D] bg-opacity-30 border border-[#FFFFFF24] rounded-md text-white px-2 text-xl}`}
           >
-            {total}
+            {totalDoc}
           </span>
         </div>
       </div>

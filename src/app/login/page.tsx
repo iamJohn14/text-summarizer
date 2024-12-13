@@ -13,18 +13,16 @@ import { openNotification } from "@/utils/notification";
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const userStore = useUserStore();
-  const summaryStore = useSummaryStore();
+  const { user, login } = useUserStore();
+  const { setSummaries, setTotalDoc } = useSummaryStore();
   const router = useRouter();
 
   // Check if the user is already authenticated and redirect if true
   useEffect(() => {
-    const user = userStore.user;
-
     if (user?.id) {
       router.push("/home");
     }
-  }, [userStore, router]);
+  }, [user, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +48,7 @@ const LoginPage: React.FC = () => {
         }; HttpOnly; Secure; SameSite=Lax`;
 
         // Update the store with the user data
-        userStore.login({
+        login({
           username: user.username,
           email: user.email,
           firstName: user.firstName,
@@ -71,13 +69,13 @@ const LoginPage: React.FC = () => {
           const summaries = summaryResponse.data;
 
           // Store summaries if needed in the store or use them in the component
-          summaryStore.setSummaries({
+          setSummaries({
             summaries,
             total: summaries.length,
           });
 
           // Store the total number of summaries
-          summaryStore.setTotalDoc(summaries.length);
+          setTotalDoc(summaries.length);
 
           router.push("/home");
         }
