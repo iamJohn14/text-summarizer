@@ -1,3 +1,4 @@
+"use client";
 import { NextRequest, NextResponse } from "next/server";
 import { login } from "@/services/userService";
 import { cookies } from "next/headers";
