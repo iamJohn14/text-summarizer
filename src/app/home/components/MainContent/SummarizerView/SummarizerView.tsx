@@ -1,8 +1,12 @@
+import { useSummaryStore } from "@/stores/summaryStore";
+import { useViewStore } from "@/stores/viewStore";
+import { openNotification } from "@/utils/notification";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 const SummarizerView = () => {
   // State for storing the input text and counts
+  const [id, setId] = useState<number | null>(null);
   const [text, setText] = useState<string>("");
   const [summary, setSummary] = useState<string>("");
   const [wordCount, setWordCount] = useState<number>(0);
@@ -13,22 +17,21 @@ const SummarizerView = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
 
+  const summaryStoreState = useSummaryStore((state) => state);
+  const summaryStore = useSummaryStore();
+  const viewStoreState = useViewStore((state) => state);
+
   // Update word and character counts whenever text changes
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const updatedText = e.target.value;
     setText(updatedText);
-
-    // Count words by splitting the text on spaces and filtering empty entries
-    const words = updatedText.trim().split(/\s+/).filter(Boolean);
-    setWordCount(words.length);
-    setCharCount(updatedText.length);
   };
 
   const handlePaste = () => {
     navigator.clipboard.readText().then((clipboardText) => {
-      setText((prevText) => prevText + clipboardText); // Append pasted text to existing text
-      textareaRef.current?.focus(); // Focus back on the textarea
-      setShowButtons(false); // Hide buttons after pasting
+      setText((prevText) => prevText + clipboardText);
+      textareaRef.current?.focus();
+      setShowButtons(false);
       const words = clipboardText.trim().split(/\s+/).filter(Boolean);
       setWordCount(words.length);
       setCharCount(clipboardText.length);
@@ -37,9 +40,13 @@ const SummarizerView = () => {
 
   const handleReset = () => {
     setText("");
+    setSummary("");
     setShowButtons(true);
     setWordCount(0);
     setCharCount(0);
+    setSummarizedWordCount(0);
+    setSummarizedCharCount(0);
+    summaryStore.setForEdit(null);
   };
 
   // Function to handle summarization
@@ -75,6 +82,7 @@ const SummarizerView = () => {
   };
 
   const handleCopyToClipboard = () => {
+    openNotification("success", "Copied to Clipboard!");
     navigator.clipboard.writeText(summary);
   };
 
@@ -83,12 +91,46 @@ const SummarizerView = () => {
   );
 
   useEffect(() => {
+    if (summaryStoreState.forEdit) {
+      // Find the summary with the matching ID
+      const matchingSummary = summaryStoreState.summaries.find(
+        (summary) => summary.id === summaryStoreState.forEdit
+      );
+
+      if (matchingSummary) {
+        setText(matchingSummary.content);
+        setSummary(matchingSummary.summary);
+        setId(matchingSummary.id);
+      }
+    }
+  }, []);
+
+  // Handles the word and character count of content
+  useEffect(() => {
+    if (text) {
+      const words = text.trim().split(/\s+/).filter(Boolean);
+      setWordCount(words.length);
+      setCharCount(text.length);
+    }
+  }, [text]);
+
+  // Handles the word and character count of summary
+  useEffect(() => {
     if (summary) {
       const words = summary.trim().split(/\s+/).filter(Boolean);
       setSummarizedWordCount(words.length);
       setSummarizedCharCount(summary.length);
     }
   }, [summary]);
+
+  // Trigger when new Summarize Text button is clicked
+  useEffect(() => {
+    if (viewStoreState.trigger) {
+      setText("");
+      setSummary("");
+      setShowButtons(false);
+    }
+  }, [viewStoreState]);
 
   return (
     <div className="p-10 md:p-14 space-y-4">
@@ -226,9 +268,11 @@ const SummarizerView = () => {
         {/* Copy to Clipboard Button */}
         <div>
           <button
+            disabled={summary.trim() === ""}
             onClick={handleCopyToClipboard}
-            disabled={!summary}
-            className="bg-[#eeeeee] p-2 rounded-lg flex items-center space-x-2 hover:bg-[#d8d8d8]"
+            className={`bg-[#eeeeee] p-2 rounded-lg flex items-center space-x-2 hover:bg-[#d8d8d8] ${
+              summary.trim() === "" ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             {/* Icon with hover effect */}
             <Image

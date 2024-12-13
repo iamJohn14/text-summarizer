@@ -19,13 +19,15 @@ export async function addSummary(
 
 // Get all summaries by userId, with optional date range filtering
 export async function getSummariesByUser(userId: number, startDate?: Date) {
-  const filters: { userId: number; createdAt?: { gte?: Date } } = {
+  const filters: { userId: number; createdAt?: { gte?: Date; lte?: Date } } = {
     userId,
   };
 
+  const currentDate = new Date();
+
   // Apply startDate filter if provided
   if (startDate) {
-    filters.createdAt = { gte: startDate }; // greater than or equal to startDate
+    filters.createdAt = { gte: startDate, lte: currentDate };
   }
 
   const summaries = await prisma.summary.findMany({
@@ -110,6 +112,60 @@ export async function searchSummary(query: string, userId: number) {
         },
       ],
     },
+    include: {
+      user: true, // Optionally include user data for each summary
+    },
+  });
+
+  return summaries;
+}
+
+export async function getSummaries({
+  userId,
+  startDate,
+  searchStr,
+}: {
+  userId: number;
+  startDate?: Date;
+  searchStr?: string;
+}) {
+  const filters: {
+    userId: number;
+    createdAt?: { gte?: Date; lte?: Date };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    OR?: Array<any>;
+  } = {
+    userId,
+  };
+
+  const currentDate = new Date();
+
+  // Apply startDate filter if provided
+  if (startDate) {
+    filters.createdAt = { gte: startDate, lte: currentDate };
+  }
+
+  // Apply search filter if provided
+  if (searchStr) {
+    filters.OR = [
+      {
+        content: {
+          contains: searchStr,
+          mode: "insensitive", // Case-insensitive search for content
+        },
+      },
+      {
+        summary: {
+          contains: searchStr,
+          mode: "insensitive", // Case-insensitive search for summary
+        },
+      },
+    ];
+  }
+
+  // Fetch the summaries with applied filters
+  const summaries = await prisma.summary.findMany({
+    where: filters,
     include: {
       user: true, // Optionally include user data for each summary
     },

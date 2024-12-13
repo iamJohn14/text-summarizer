@@ -4,13 +4,19 @@ import { useViewStore } from "@/stores/viewStore";
 import Image from "next/image";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useSummaryStore } from "@/stores/summaryStore";
 
 const Sidebar = () => {
+  const summaryStoreState = useSummaryStore((state) => state);
+  const summaryStore = useSummaryStore();
+  const viewStore = useViewStore();
   const userStore = useUserStore();
   const account = userStore.user;
   const router = useRouter();
 
   const { selectedView, setSelectedView } = useViewStore();
+
+  const total = summaryStoreState.total;
 
   useEffect(() => {
     if (account.id === null) {
@@ -55,6 +61,13 @@ const Sidebar = () => {
       console.error("An error occurred during logout:", error);
     }
   };
+
+  const handleSummarizeText = () => {
+    viewStore.setSelectedView("home");
+    viewStore.setTrigger(true);
+    summaryStore.setForEdit(null);
+  };
+
   return (
     <div className="bg-[#14151A] h-auto md:h-screen flex flex-col text-white p-5 md:p-6">
       {/* Profile section */}
@@ -87,7 +100,10 @@ const Sidebar = () => {
       {/* Navigation section */}
       <div className="flex flex-col space-y-6">
         {/* Summarize Text button */}
-        <button className="bg-white text-black py-2 px-4 rounded-md hover:bg-gray-200 w-full mx-auto">
+        <button
+          onClick={handleSummarizeText}
+          className="bg-white text-black py-2 px-4 rounded-md hover:bg-gray-200 w-full mx-auto"
+        >
           + Summarize Text
         </button>
 
@@ -120,7 +136,7 @@ const Sidebar = () => {
           <span
             className={`bg-[#3368F04D] bg-opacity-30 border border-[#FFFFFF24] rounded-md text-white px-2 text-xl}`}
           >
-            15
+            {total}
           </span>
         </div>
       </div>

@@ -38,13 +38,13 @@ export async function login(username: string, password: string) {
     });
 
     if (!user) {
-      throw new Error("Invalid credentials");
+      throw new Error("Invalid Username");
     }
 
     // Validate password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new Error("Invalid credentials");
+      throw new Error("Incorrect Password");
     }
 
     // Destructure user object to exclude password
@@ -63,11 +63,13 @@ export async function login(username: string, password: string) {
       user: userWithoutPassword,
     };
   } catch (error) {
-    console.error(
-      "Login error:",
-      error instanceof Error ? error.message : error
-    );
-    throw new Error("An error occurred during login. Please try again.");
+    if (error instanceof Error) {
+      console.error("Login error:", error.message);
+      throw new Error(error.message);
+    } else {
+      console.error("Login error:", error);
+      throw new Error("An unknown error occurred during login.");
+    }
   }
 }
 

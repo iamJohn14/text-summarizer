@@ -7,10 +7,15 @@ export const useViewStore = create<ViewStore>()(
     (set) => ({
       selectedView: "home",
       currentPage: 1,
-      total: 0,
+      filter: {
+        date: ">60days",
+        search: "",
+      },
+      trigger: false,
       setSelectedView: (view: string) => set({ selectedView: view }),
       setCurrentPage: (page: number) => set({ currentPage: page }),
-      setTotal: (total: number) => set({ total }),
+      setFilter: (filter: { date: string; search: string }) => set({ filter }),
+      setTrigger: (value: boolean) => set({ trigger: value }),
     }),
     {
       name: "view-storage",

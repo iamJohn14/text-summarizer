@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  addSummary,
-  getSummariesByUser,
-  searchSummary,
-} from "@/services/summaryService";
+import { addSummary, getSummaries } from "@/services/summaryService";
 import { validateToken } from "@/utils/tokenUtils";
 import { getStartDateForFilter } from "@/utils/dateUtils";
 import { countChars, countWords } from "@/utils/textUtils";
@@ -21,18 +17,24 @@ export async function GET(req: NextRequest) {
     }
 
     const userId = Number(decodedToken.id); // Extract the user ID from the decoded token
-    const { date, search } = req.nextUrl.searchParams;
+    const date = req.nextUrl.searchParams.get("date");
+    const search = req.nextUrl.searchParams.get("search");
 
-    let summaries;
+    // Create an object with the necessary parameters
+    const filters: { userId: number; startDate?: Date; searchStr?: string } = {
+      userId,
+    };
 
+    // Conditionally add filters based on the presence of the `date` and `search` parameters
     if (date) {
-      const startDate = getStartDateForFilter(date);
-      summaries = await getSummariesByUser(userId, startDate);
-    } else if (search) {
-      summaries = await searchSummary(search, userId);
-    } else {
-      summaries = await getSummariesByUser(userId);
+      filters.startDate = getStartDateForFilter(date);
     }
+    if (search) {
+      filters.searchStr = search;
+    }
+
+    // Fetch summaries with the constructed filters object
+    const summaries = await getSummaries(filters);
 
     const formattedSummaries = summaries.map((summary) => {
       const wordCount = countWords(summary.summary);
@@ -44,6 +46,7 @@ export async function GET(req: NextRequest) {
         summary: summary.summary,
         charCount,
         wordCount,
+        createdAt: summary.createdAt,
       };
     });
 

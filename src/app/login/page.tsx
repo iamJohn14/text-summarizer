@@ -7,6 +7,8 @@ import { useUserStore } from "@/stores/userStore";
 import { User } from "@/types/types";
 import { useRouter } from "next/navigation";
 import { useSummaryStore } from "@/stores/summaryStore";
+import { Input } from "antd";
+import { openNotification } from "@/utils/notification";
 
 const LoginPage: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
@@ -25,10 +27,6 @@ const LoginPage: React.FC = () => {
     }
   }, [userStore, router]);
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible((prev) => !prev);
-  };
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -40,6 +38,11 @@ const LoginPage: React.FC = () => {
       });
 
       if (response.status === 200) {
+        openNotification(
+          "success",
+          "Login Successful",
+          "You will be redirected shortly"
+        );
         const { token, user }: { token: string; user: User } = response.data;
 
         // Store the token in cookies with secure flags
@@ -61,6 +64,7 @@ const LoginPage: React.FC = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+          params: { date: ">60days" },
         });
 
         // Optionally, handle the summary data
@@ -70,13 +74,25 @@ const LoginPage: React.FC = () => {
           // Store summaries if needed in the store or use them in the component
           summaryStore.setSummaries({
             summaries,
-            total: summaries.length.toString(),
+            total: summaries.length,
           });
 
           router.push("/home");
         }
       }
     } catch (error) {
+      // Check if the error is an instance of AxiosError
+      if (axios.isAxiosError(error)) {
+        // Safely access response data and message
+        const errorMessage = error.response?.data?.details;
+        const description =
+          errorMessage === "Invalid Username"
+            ? "The username you entered does not exist."
+            : errorMessage === "Incorrect Password"
+            ? "The password that you’ve entered is incorrect. Please try again."
+            : "Please check the credentials and try again.";
+        openNotification("error", errorMessage, description);
+      }
       console.error(`Invalid credentials, please try again, ${error}`);
     }
   };
@@ -106,39 +122,24 @@ const LoginPage: React.FC = () => {
           <form onSubmit={handleLogin} className="space-y-4">
             {/* Username Input */}
             <div>
-              <input
-                type="text"
-                id="username"
-                name="username"
+              <Input
                 placeholder="Username"
-                className="mt-1 block w-full px-4 py-2 border border-[#DEE0E3] rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                className="mt-1"
+                required
               />
             </div>
 
             {/* Password Input */}
             <div>
-              <div className="relative">
-                <input
-                  type={passwordVisible ? "text" : "password"}
-                  id="password"
-                  name="password"
-                  placeholder="Password"
-                  className="mt-1 block w-full px-4 py-2 border border-[#DEE0E3] rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                  onClick={togglePasswordVisibility}
-                >
-                  <EyeIcon className="h-5 w-5" />
-                </button>
-              </div>
+              <Input.Password
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-1"
+                required
+              />
             </div>
 
             {/* Submit Button */}

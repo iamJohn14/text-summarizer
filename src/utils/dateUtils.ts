@@ -32,3 +32,18 @@ export function getStartDateForFilter(filterDate: string): Date | undefined {
 
   return startDate;
 }
+
+// Function to format date to 'December 10, 2024 • 3:20 PM'
+export const formatDate = (date: Date) => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  };
+
+  const formattedDate = new Date(date).toLocaleString("en-US", options);
+  return formattedDate.replace(",", " •");
+};

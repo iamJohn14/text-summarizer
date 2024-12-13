@@ -14,13 +14,22 @@ export interface User {
   id: number;
 }
 
+export interface Filter {
+  search?: string;
+  date?: string;
+}
 export interface ViewStore {
   selectedView: string;
   currentPage: number;
-  total: number;
+  filter: {
+    date: string;
+    search: string;
+  };
+  trigger: boolean;
   setSelectedView: (view: string) => void;
   setCurrentPage: (page: number) => void;
-  setTotal: (total: number) => void;
+  setFilter: (filter: { date: string; search: string }) => void;
+  setTrigger: (value: boolean) => void;
 }
 
 export interface UserParameter {
@@ -56,10 +65,17 @@ export interface Summary {
   summary: string;
   wordCount: number;
   charCount: number;
+  createdAt: Date;
 }
 
 export interface SummaryStore {
   summaries: Summary[];
-  total: string;
-  setSummaries: (data: { summaries: Summary[]; total: string }) => void;
+  total: number;
+  setSummaries: (data: { summaries: Summary[]; total: number }) => void;
+  forEdit: number | null;
+  setForEdit: (index: number | null) => void;
+}
+
+export interface OptionsMenuProps {
+  summary: any; // Define the type of summary as per your data
 }
