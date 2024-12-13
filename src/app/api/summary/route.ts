@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     const token = req.cookies.get("token");
 
     // Verify the user using the token and extract the user ID from the token
-    const decodedToken = await validateToken(token?.value);
+    const decodedToken = await validateToken(token?.value as string);
 
     if (!decodedToken || !decodedToken.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     const token = req.cookies.get("token");
 
     // Verify the user using the token and extract the user ID from the token
-    const decodedToken = await validateToken(token?.value);
+    const decodedToken = await validateToken(token?.value as string);
 
     if (!decodedToken || !decodedToken.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
