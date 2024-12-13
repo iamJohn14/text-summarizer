@@ -17,14 +17,13 @@ export function validateToken(token: string): JwtPayload | null {
 
     return decoded;
   } catch (error) {
-    // Handle different types of JWT errors here
-    if (error instanceof jwt.JsonWebTokenError) {
-      console.error("JWT Error: ", error.message);
+    if (error instanceof jwt.TokenExpiredError) {
+      console.error("JWT Token expired:", error.message);
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      console.error("JWT Error:", error.message);
     } else {
-      // Catch any other errors
-      console.error("Token validation error: ", error);
+      console.error("General Token Error:", error);
     }
-
     return null;
   }
 }
