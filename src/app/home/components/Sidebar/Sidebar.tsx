@@ -16,7 +16,7 @@ const Sidebar = () => {
 
   const { selectedView, setSelectedView } = useViewStore();
 
-  const total = summaryStoreState.total;
+  const total = summaryStoreState.totalDoc;
 
   useEffect(() => {
     if (account.id === null) {

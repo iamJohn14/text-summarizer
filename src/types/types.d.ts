@@ -71,7 +71,9 @@ export interface Summary {
 export interface SummaryStore {
   summaries: Summary[];
   total: number;
+  totalDoc: number;
   setSummaries: (data: { summaries: Summary[]; total: number }) => void;
+  setTotalDoc: (count: number) => void;
   forEdit: number | null;
   setForEdit: (index: number | null) => void;
 }

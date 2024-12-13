@@ -8,7 +8,8 @@ export const useSummaryStore = create<SummaryStore>()(
     (set) => ({
       summaries: [],
       total: 0,
-      forEdit: null, // Initialize forEdit as null
+      totalDoc: 0,
+      forEdit: null,
       setSummaries: (data: { summaries: Summary[]; total: number }) =>
         set({
           summaries: data.summaries,
@@ -21,6 +22,7 @@ export const useSummaryStore = create<SummaryStore>()(
           return { summaries: updatedSummaries };
         }),
       setForEdit: (index: number | null) => set({ forEdit: index }),
+      setTotalDoc: (count: number) => set({ totalDoc: count }),
     }),
     { name: "summary-storage" }
   )

@@ -11,7 +11,6 @@ import { Input } from "antd";
 import { openNotification } from "@/utils/notification";
 
 const LoginPage: React.FC = () => {
-  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const userStore = useUserStore();
@@ -76,6 +75,9 @@ const LoginPage: React.FC = () => {
             summaries,
             total: summaries.length,
           });
+
+          // Store the total number of summaries
+          summaryStore.setTotalDoc(summaries.length);
 
           router.push("/home");
         }
