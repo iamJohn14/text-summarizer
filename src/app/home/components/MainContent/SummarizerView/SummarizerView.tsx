@@ -1,11 +1,11 @@
 import { useSummaryStore } from "@/stores/summaryStore";
 import { useViewStore } from "@/stores/viewStore";
 import { openNotification } from "@/utils/notification";
+import axios from "axios";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 const SummarizerView = () => {
-  // State for storing the input text and counts
   const [id, setId] = useState<number | null>(null);
   const [text, setText] = useState<string>("");
   const [summary, setSummary] = useState<string>("");
@@ -17,8 +17,15 @@ const SummarizerView = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
 
-  const { forEdit, setForEdit, summaries } = useSummaryStore();
-  const { trigger } = useViewStore();
+  const {
+    forEdit,
+    setForEdit,
+    summaries,
+    setSummaries,
+    setTotalDoc,
+    totalDoc,
+  } = useSummaryStore();
+  const { trigger, filter } = useViewStore();
 
   // Update word and character counts whenever text changes
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -46,28 +53,56 @@ const SummarizerView = () => {
 
   // Function to handle summarization
   const handleSummarize = async () => {
-    if (text.trim() === "") return;
-
     try {
       setIsLoading(true);
-      const response = await fetch("/api/summarizer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ content: text }),
+
+      const response = await axios.post("/api/summarizer", {
+        content: text,
       });
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
+      const data = response.data;
 
-      const data = await response.json();
-
-      if (data.summary) {
+      if (response.status === 200) {
         setSummary(data.summary);
+
+        if (id) {
+          const updateResponse = await axios.put(`/api/summary/${id}`, {
+            content: text,
+            summary: data.summary,
+          });
+
+          if (response.status !== 200) {
+            throw new Error(
+              `Failed to update summary: ${updateResponse.status} ${updateResponse.statusText}`
+            );
+          }
+        } else {
+          const addResponse = await axios.post("/api/summary", {
+            content: text,
+            summary: data.summary,
+          });
+
+          if (response.status === 200) {
+            setTotalDoc(totalDoc + 1);
+          } else {
+            throw new Error(
+              `Failed to add summary: ${addResponse.status} ${addResponse.statusText}`
+            );
+          }
+        }
+
+        const getResponse = await axios.get("/api/summary", {
+          params: { date: filter.date, search: filter.search },
+        });
+
+        if (getResponse.status === 200) {
+          setSummaries({
+            summaries: getResponse.data,
+            total: getResponse.data.length,
+          });
+        }
       } else {
-        console.error("No summary returned:", data);
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
       console.error("Error during summarization:", error);

@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { EyeIcon } from "@heroicons/react/20/solid";
 import axios from "axios";
 import { useUserStore } from "@/stores/userStore";
 import { User } from "@/types/types";
@@ -58,9 +57,6 @@ const LoginPage: React.FC = () => {
 
         // Fetch additional user-related data after login (e.g., user history, profile data)
         const summaryResponse = await axios.get("/api/summary", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
           params: { date: ">60days" },
         });
 

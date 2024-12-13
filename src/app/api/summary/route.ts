@@ -71,7 +71,6 @@ export async function POST(req: NextRequest) {
     }
 
     const userId = Number(decodedToken.id); // Extract the user ID from the decoded token
-
     const { content, summary } = await req.json(); // Assuming the request body has 'content' and 'summary'
 
     // Validate the provided data
