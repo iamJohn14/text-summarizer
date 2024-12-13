@@ -6,7 +6,11 @@ export const useViewStore = create<ViewStore>()(
   persist(
     (set) => ({
       selectedView: "home",
+      currentPage: 1,
+      total: 0,
       setSelectedView: (view: string) => set({ selectedView: view }),
+      setCurrentPage: (page: number) => set({ currentPage: page }),
+      setTotal: (total: number) => set({ total }),
     }),
     {
       name: "view-storage",

@@ -6,12 +6,14 @@ import axios from "axios";
 import { useUserStore } from "@/stores/userStore";
 import { User } from "@/types/types";
 import { useRouter } from "next/navigation";
+import { useSummaryStore } from "@/stores/summaryStore";
 
 const LoginPage: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const userStore = useUserStore();
+  const summaryStore = useSummaryStore();
   const router = useRouter();
 
   // Check if the user is already authenticated and redirect if true
@@ -54,7 +56,25 @@ const LoginPage: React.FC = () => {
           id: user.id,
         });
 
-        router.push("/home");
+        // Fetch additional user-related data after login (e.g., user history, profile data)
+        const summaryResponse = await axios.get("/api/summary", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Optionally, handle the summary data
+        if (summaryResponse.status === 200) {
+          const summaries = summaryResponse.data;
+
+          // Store summaries if needed in the store or use them in the component
+          summaryStore.setSummaries({
+            summaries,
+            total: summaries.length.toString(),
+          });
+
+          router.push("/home");
+        }
       }
     } catch (error) {
       console.error(`Invalid credentials, please try again, ${error}`);

@@ -16,7 +16,11 @@ export interface User {
 
 export interface ViewStore {
   selectedView: string;
+  currentPage: number;
+  total: number;
   setSelectedView: (view: string) => void;
+  setCurrentPage: (page: number) => void;
+  setTotal: (total: number) => void;
 }
 
 export interface UserParameter {
@@ -44,4 +48,18 @@ export interface HistoryEntry {
 export interface TokenPayload {
   id: string;
   username: string;
+}
+
+export interface Summary {
+  id: number;
+  content: string;
+  summary: string;
+  wordCount: number;
+  charCount: number;
+}
+
+export interface SummaryStore {
+  summaries: Summary[];
+  total: string;
+  setSummaries: (data: { summaries: Summary[]; total: string }) => void;
 }

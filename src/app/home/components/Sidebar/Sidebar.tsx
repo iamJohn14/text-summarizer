@@ -45,6 +45,8 @@ const Sidebar = () => {
 
         // Optionally, clear any persisted data in localStorage or cookies
         localStorage.removeItem("user-storage");
+        localStorage.removeItem("view-storage");
+        localStorage.removeItem("summary-storage");
 
         // Redirect the user to the login page
         router.push("/login");

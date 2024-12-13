@@ -2,7 +2,6 @@ import { UserParameter, UserStore } from "@/types/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-// Apply the persist middleware
 export const useUserStore = create<UserStore>()(
   persist(
     (set) => ({

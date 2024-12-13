@@ -21,15 +21,15 @@ export async function GET(req: NextRequest) {
     }
 
     const userId = Number(decodedToken.id); // Extract the user ID from the decoded token
-    const { filterDate, searchQuery } = req.nextUrl.searchParams;
+    const { date, search } = req.nextUrl.searchParams;
 
     let summaries;
 
-    if (filterDate) {
-      const startDate = getStartDateForFilter(filterDate);
+    if (date) {
+      const startDate = getStartDateForFilter(date);
       summaries = await getSummariesByUser(userId, startDate);
-    } else if (searchQuery) {
-      summaries = await searchSummary(searchQuery, userId);
+    } else if (search) {
+      summaries = await searchSummary(search, userId);
     } else {
       summaries = await getSummariesByUser(userId);
     }
