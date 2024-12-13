@@ -1,4 +1,3 @@
-"use client";
 import { NextRequest, NextResponse } from "next/server";
 import { deleteSummary, updateSummary } from "@/services/summaryService";
 import { validateToken } from "@/utils/tokenUtils";
