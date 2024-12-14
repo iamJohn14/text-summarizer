@@ -1,30 +1,34 @@
 import { TokenPayload } from "@/types/types";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt, {
+  JsonWebTokenError,
+  JwtPayload,
+  TokenExpiredError,
+} from "jsonwebtoken";
 
 // Validate the token and return decoded payload
-export function validateToken(token: string): JwtPayload | null {
-  try {
-    const secret = process.env.JWT_SECRET;
-    if (!secret) {
-      throw new Error("JWT_SECRET is not defined in the environment variables");
-    }
+export function validateToken(token: string): JwtPayload {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET is not defined in the environment variables");
+  }
 
+  try {
     const decoded = jwt.verify(token, secret);
 
     if (typeof decoded === "string") {
       throw new Error("Invalid token format");
     }
 
-    return decoded;
+    return decoded as JwtPayload;
   } catch (error) {
-    if (error instanceof jwt.TokenExpiredError) {
+    if (error instanceof TokenExpiredError) {
       console.error("JWT Token expired:", error.message);
-    } else if (error instanceof jwt.JsonWebTokenError) {
+    } else if (error instanceof JsonWebTokenError) {
       console.error("JWT Error:", error.message);
-    } else {
-      console.error("General Token Error:", error);
+    } else if (error instanceof Error) {
+      console.error("General Token Error:", error.message);
     }
-    return null;
+    throw error;
   }
 }
 

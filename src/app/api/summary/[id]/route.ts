@@ -15,7 +15,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const userId = Number(decodedToken.id); // Extract the user ID from the decoded token
+    const userId = Number(decodedToken.id);
     const id = req.nextUrl.pathname.split("/").pop() || "";
 
     if (!id) {
