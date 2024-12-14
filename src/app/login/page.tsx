@@ -157,7 +157,7 @@ const LoginPage: React.FC = () => {
                   onClick={handleLogin}
                   className="w-full font-semibold my-2 py-6 rounded-2xl text-lg"
                 >
-                  Log in {isLoading && <Spinner />}
+                  Log in {isLoading && <Spinner mr-2 />}
                 </Button>
               </div>
             </form>

@@ -153,8 +153,8 @@ const OptionsMenu: React.FC<OptionsMenuProps> = ({ summary }) => {
               }}
               disabled={isLoading}
             >
-              Deleting
-              {isLoading && <Spinner color="text-white" />}
+              Delete
+              {isLoading && <Spinner color="text-white mr-2" />}
             </Button>
           </div>
         }

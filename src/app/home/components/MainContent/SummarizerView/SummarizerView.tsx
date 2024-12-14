@@ -256,7 +256,7 @@ const SummarizerView = () => {
               className="black-disabled-btn"
             >
               Summarize My Text
-              {isLoading && <Spinner />}
+              {isLoading && <Spinner mr-2 />}
             </Button>
           </div>
         </div>
