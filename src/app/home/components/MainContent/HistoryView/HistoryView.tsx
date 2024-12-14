@@ -7,9 +7,9 @@ import { formatDate } from "@/utils/dateUtils";
 import OptionsMenu from "./OptionsMenu";
 import { RiText } from "react-icons/ri";
 import { ImParagraphLeft } from "react-icons/im";
-import { FaCalendar } from "react-icons/fa";
 import DateRangeMenu from "./DateRangeMenu";
 import SearchSummary from "./SearchSummary";
+import { AiFillCalendar } from "react-icons/ai";
 
 const HistoryView: React.FC = () => {
   // Accessing only the state of the stores
@@ -34,9 +34,7 @@ const HistoryView: React.FC = () => {
 
       {/* Search bar */}
       <div className="flex flex-col lg:flex-row justify-between">
-        <div className="flex items-center space-x-2 pb-4 lg:pb-0">
-          <DateRangeMenu />
-        </div>
+        <DateRangeMenu />
         <SearchSummary />
       </div>
 
@@ -52,7 +50,7 @@ const HistoryView: React.FC = () => {
                 <p className="text-sm line-clamp-2">{summary.summary}</p>
                 <div className="text-sm text-gray-500 mt-2 hidden lg:flex items-center">
                   <span className="border border-[#E9EAEC] bg-[#E9EAEC] rounded-md p-1 flex items-center space-x-2 ml-4">
-                    <FaCalendar /> &nbsp;
+                    <AiFillCalendar /> &nbsp;
                     {formatDate(summary.createdAt)}
                   </span>
                   <span className="border border-[#E9EAEC] bg-[#E9EAEC] rounded-md p-1 flex items-center space-x-2 ml-4">

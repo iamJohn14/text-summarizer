@@ -104,6 +104,7 @@ const OptionsMenu: React.FC<OptionsMenuProps> = ({ summary }) => {
       <Modal
         title="Delete summarized text?"
         open={isModalVisible}
+        onCancel={handleCancelDelete}
         okButtonProps={{
           style: {
             backgroundColor: "#f44336", // Red color for delete button
@@ -150,16 +151,10 @@ const OptionsMenu: React.FC<OptionsMenuProps> = ({ summary }) => {
                 width: "48%",
                 height: "40px",
               }}
-              disabled={isLoading} // Disable button when loading
+              disabled={isLoading}
             >
-              {isLoading ? (
-                <>
-                  Deleting <Spinner color="text-white" />{" "}
-                  {/* Spinner appears after "Delete" */}
-                </>
-              ) : (
-                "Delete"
-              )}
+              Deleting
+              {isLoading && <Spinner color="text-white" />}
             </Button>
           </div>
         }

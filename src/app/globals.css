@@ -37,14 +37,13 @@
   background: #333; /* Darken thumb color on hover */
 }
 
+.black-disabled-btn:disabled {
+  color: #444444 !important;
+  border: 2px solid #444444 !important;
+}
+
 body {
   color: #14151a;
   background: var(--background);
   font-family: "Inter", Arial, Helvetica, sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
 }

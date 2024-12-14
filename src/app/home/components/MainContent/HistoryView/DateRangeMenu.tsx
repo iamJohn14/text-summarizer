@@ -2,7 +2,7 @@ import { useSummaryStore } from "@/stores/summaryStore";
 import { useViewStore } from "@/stores/viewStore";
 import { Select } from "antd";
 import axios from "axios";
-import Image from "next/image";
+import { AiFillCalendar } from "react-icons/ai";
 
 const { Option } = Select;
 
@@ -42,15 +42,7 @@ const DateRangeMenu = () => {
         placeholder="Select Date Range"
         className="rounded-2xl w-64"
         onChange={handleDateRangeChange}
-        prefix={
-          <Image
-            src="/images/calendar.png"
-            alt="Calendar"
-            width={20}
-            height={20}
-            priority
-          />
-        }
+        prefix={<AiFillCalendar className="text-gray-500 text-lg" />}
       >
         <Option value="today">Today</Option>
         <Option value="last7days">Last 7 Days</Option>

@@ -6,7 +6,7 @@ import { useUserStore } from "@/stores/userStore";
 import { User } from "@/types/types";
 import { useRouter } from "next/navigation";
 import { useSummaryStore } from "@/stores/summaryStore";
-import { Input } from "antd";
+import { Button, Input } from "antd";
 import { openNotification } from "@/utils/notification";
 import Spinner from "@/utils/spinner";
 
@@ -124,52 +124,44 @@ const LoginPage: React.FC = () => {
             Enter your username and password to continue
           </p>
 
-          <form onSubmit={handleLogin} className="space-y-4">
-            {/* Username Input */}
-            <div>
-              <Input
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="mt-1"
-                required
-              />
-            </div>
+          <div className="space-4 md:mx-10">
+            <form onSubmit={handleLogin}>
+              {/* Username Input */}
+              <div>
+                <Input
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="my-2 py-3 rounded-2xl text-lg"
+                  required
+                />
+              </div>
 
-            {/* Password Input */}
-            <div>
-              <Input.Password
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="mt-1"
-                required
-              />
-            </div>
+              {/* Password Input */}
+              <div>
+                <Input.Password
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="my-2 py-3 rounded-2xl text-lg"
+                  required
+                />
+              </div>
 
-            {/* Submit Button */}
-            <div>
-              <button
-                type="submit"
-                onClick={handleLogin}
-                className={`w-full py-2 px-4 font-semibold rounded-md flex items-center justify-center space-x-2 ${
-                  isLoading
-                    ? "bg-gray-500 cursor-not-allowed"
-                    : "bg-[#14151A] text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                }`}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <span className="text-white">Loading...</span>
-                    <Spinner size="text-lg" color="text-white" />
-                  </>
-                ) : (
-                  "Log in"
-                )}
-              </button>
-            </div>
-          </form>
+              {/* Submit Button */}
+              <div>
+                <Button
+                  htmlType="submit"
+                  color="default"
+                  variant="solid"
+                  onClick={handleLogin}
+                  className="w-full font-semibold my-2 py-6 rounded-2xl text-lg"
+                >
+                  Log in {isLoading && <Spinner />}
+                </Button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>

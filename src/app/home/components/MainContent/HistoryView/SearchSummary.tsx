@@ -40,14 +40,16 @@ const SearchSummary = () => {
   };
 
   return (
-    <Input
-      placeholder="Search"
-      className="rounded-2xl w-96"
-      prefix={<SearchOutlined className="text-gray-400" />}
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-      onPressEnter={() => handleSearch(searchQuery)}
-    />
+    <div className="w-auto sm:w-96">
+      <Input
+        placeholder="Search"
+        className="rounded-2xl "
+        prefix={<SearchOutlined className="text-gray-400" />}
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        onPressEnter={() => handleSearch(searchQuery)}
+      />
+    </div>
   );
 };
 

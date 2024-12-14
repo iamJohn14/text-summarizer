@@ -1,10 +1,13 @@
 import React, { useEffect } from "react";
 import { useUserStore } from "@/stores/userStore";
 import { useViewStore } from "@/stores/viewStore";
-import Image from "next/image";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useSummaryStore } from "@/stores/summaryStore";
+import { Button } from "antd";
+import { HiMailOpen } from "react-icons/hi";
+import { PiClockFill } from "react-icons/pi";
+import { IoMdLogOut } from "react-icons/io";
 
 const Sidebar = () => {
   const { totalDoc, setForEdit } = useSummaryStore();
@@ -82,59 +85,82 @@ const Sidebar = () => {
           </div>
         </div>
 
-        <Image
-          src="/images/logout.png"
-          alt="Logout"
-          width={45}
-          height={45}
-          className="cursor-pointer hover:opacity-80"
+        <IoMdLogOut
+          className="cursor-pointer hover:opacity-80 text-4xl"
           onClick={handleLogout}
-          priority
         />
       </div>
 
       {/* Navigation section */}
       <div className="flex flex-col space-y-6">
         {/* Summarize Text button */}
-        <button
+        <Button
           onClick={handleSummarizeText}
-          className="bg-white text-black py-2 px-4 rounded-md hover:bg-gray-200 w-full mx-auto"
+          className="bg-white text-black p-6 rounded-md hover:bg-gray-200 w-full mx-auto text-md"
         >
           + Summarize Text
-        </button>
+        </Button>
 
         {/* Home section with logo on the left */}
-        <div
+        <Button
+          onClick={() => handleItemClick("home")}
+          color="default"
+          variant="solid"
+          // className="p-6 justify-start text-xl side-button !bg-[transparent]"
+          className={`p-6 justify-start text-xl side-button  ${
+            selectedView === "home" ? "!bg-gray-700" : "!bg-transparent"
+          } hover:bg-gray-600`}
+          icon={<HiMailOpen className="text-3xl" />}
+        >
+          Home
+        </Button>
+
+        {/* History section with logo on the left */}
+        <Button
+          onClick={() => handleItemClick("history")}
+          color="default"
+          variant="solid"
+          className={`p-6 justify-start text-xl side-button ${
+            selectedView === "history" ? "!bg-gray-700" : "!bg-transparent"
+          } hover:bg-gray-600`}
+          icon={<PiClockFill className="text-3xl" />}
+        >
+          <>
+            History
+            <span
+              className={`ml-2 bg-[#3368F04D] bg-opacity-30 border border-[#FFFFFF24] rounded-md text-white px-2 text-lg`}
+            >
+              {totalDoc}
+            </span>
+          </>
+        </Button>
+
+        {/* Home section with logo on the left */}
+        {/* <div
           className={`flex items-center space-x-3 cursor-pointer ${
             selectedView === "home" ? "bg-gray-700" : ""
           } hover:bg-gray-600 rounded-md p-2 transition-all`}
           onClick={() => handleItemClick("home")}
         >
-          <Image src="/images/home.png" alt="Home" width={24} height={24} />
+          <HiMailOpen />
           <span className={`text-xl`}>Home</span>
-        </div>
+        </div> */}
 
         {/* History section with logo on the left */}
-        <div
+        {/* <div
           className={`flex items-center space-x-3 cursor-pointer ${
             selectedView === "history" ? "bg-gray-700" : ""
           } hover:bg-gray-600 rounded-md p-2 transition-all`}
           onClick={() => handleItemClick("history")}
         >
-          <Image
-            src="/images/history.png"
-            alt="History"
-            width={24}
-            height={24}
-            priority
-          />
+          <PiClockFill />
           <span className={`text-xl`}>History</span>
           <span
             className={`bg-[#3368F04D] bg-opacity-30 border border-[#FFFFFF24] rounded-md text-white px-2 text-xl}`}
           >
             {totalDoc}
           </span>
-        </div>
+        </div> */}
       </div>
     </div>
   );
