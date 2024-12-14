@@ -65,7 +65,6 @@ const SummarizerView = () => {
 
       if (response.status === 200) {
         setSummary(data.summary);
-        setTotalDoc(totalDoc + 1);
         setIsLoading(false);
 
         if (id) {
@@ -88,6 +87,7 @@ const SummarizerView = () => {
           if (response.status === 200) {
             setForEdit(addResponse.data.id);
             setId(addResponse.data.id);
+            setTotalDoc(totalDoc + 1);
           } else {
             throw new Error(
               `Failed to add summary: ${addResponse.status} ${addResponse.statusText}`
