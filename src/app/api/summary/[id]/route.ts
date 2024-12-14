@@ -6,17 +6,13 @@ import { JwtPayload } from "jsonwebtoken";
 // Handle PUT requests for updating a summary by ID
 export async function PUT(req: NextRequest) {
   try {
-    // Get the token from cookies
     const token = req.cookies.get("token");
 
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Verify the user using the token and extract the user ID from the token
-    const decodedToken: JwtPayload = await validateToken(
-      token?.value as string
-    );
+    const decodedToken: JwtPayload = await validateToken(token.value as string);
 
     if (!decodedToken || !decodedToken.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -32,9 +28,8 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    const { content, summary } = await req.json(); // Assuming the request body has 'content' and 'summary'
+    const { content, summary } = await req.json();
 
-    // Validate the provided data
     if (!content || !summary) {
       return NextResponse.json(
         { error: "Content and summary are required" },
@@ -42,35 +37,36 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    // Update the summary
     const updatedSummary = await updateSummary(
       Number(id),
       content,
       summary,
       userId
     );
-
     return NextResponse.json(updatedSummary, { status: 200 });
   } catch (error: unknown) {
-    console.error("Error in PUT request:", error);
-    return NextResponse.json({ error: "An error occurred" }, { status: 500 });
+    if (error instanceof Error) {
+      console.error("Error in PUT request:", error.message);
+    } else {
+      console.error("Unknown error occurred in PUT request");
+    }
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
   }
 }
 
 // Handle DELETE requests for deleting a summary by ID
 export async function DELETE(req: NextRequest) {
   try {
-    // Get the token from cookies
     const token = req.cookies.get("token");
 
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Verify the user using the token and extract the user ID from the token
-    const decodedToken: JwtPayload = await validateToken(
-      token?.value as string
-    );
+    const decodedToken: JwtPayload = await validateToken(token.value as string);
 
     if (!decodedToken || !decodedToken.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -86,12 +82,17 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    // Delete the summary
     const deletedSummary = await deleteSummary(Number(id), userId);
-
     return NextResponse.json(deletedSummary, { status: 200 });
   } catch (error: unknown) {
-    console.error("Error in DELETE request:", error);
-    return NextResponse.json({ error: "An error occurred" }, { status: 500 });
+    if (error instanceof Error) {
+      console.error("Error in DELETE request:", error.message);
+    } else {
+      console.error("Unknown error occurred in DELETE request");
+    }
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
   }
 }
