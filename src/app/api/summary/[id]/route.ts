@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { deleteSummary, updateSummary } from "@/services/summaryService";
 import { validateToken } from "@/utils/tokenUtils";
+import { JwtPayload } from "jsonwebtoken";
 
 // Handle PUT requests for updating a summary by ID
 export async function PUT(req: NextRequest) {
@@ -13,7 +14,9 @@ export async function PUT(req: NextRequest) {
     }
 
     // Verify the user using the token and extract the user ID from the token
-    const decodedToken = await validateToken(token?.value as string);
+    const decodedToken: JwtPayload = await validateToken(
+      token?.value as string
+    );
 
     if (!decodedToken || !decodedToken.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -60,14 +63,20 @@ export async function DELETE(req: NextRequest) {
     // Get the token from cookies
     const token = req.cookies.get("token");
 
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     // Verify the user using the token and extract the user ID from the token
-    const decodedToken = await validateToken(token?.value as string);
+    const decodedToken: JwtPayload = await validateToken(
+      token?.value as string
+    );
 
     if (!decodedToken || !decodedToken.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const userId = Number(decodedToken.id); // Extract the user ID from the decoded token
+    const userId = Number(decodedToken.id);
     const id = req.nextUrl.pathname.split("/").pop() || "";
 
     if (!id) {
