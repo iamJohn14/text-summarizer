@@ -8,8 +8,10 @@ import { useRouter } from "next/navigation";
 import { useSummaryStore } from "@/stores/summaryStore";
 import { Input } from "antd";
 import { openNotification } from "@/utils/notification";
+import Spinner from "@/utils/spinner";
 
 const LoginPage: React.FC = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { user, login } = useUserStore();
@@ -24,6 +26,7 @@ const LoginPage: React.FC = () => {
   }, [user, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
+    setIsLoading(true);
     e.preventDefault();
 
     try {
@@ -93,6 +96,9 @@ const LoginPage: React.FC = () => {
         console.error("Login failed:", error);
         openNotification("error", "Login failed", "Please try again later.");
       }
+    } finally {
+      // Ensure loading is stopped even if there is an error or success
+      setIsLoading(false);
     }
   };
 
@@ -145,9 +151,22 @@ const LoginPage: React.FC = () => {
             <div>
               <button
                 type="submit"
-                className="w-full py-2 px-4 bg-[#14151A] text-white font-semibold rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                onClick={handleLogin}
+                className={`w-full py-2 px-4 font-semibold rounded-md flex items-center justify-center space-x-2 ${
+                  isLoading
+                    ? "bg-gray-500 cursor-not-allowed"
+                    : "bg-[#14151A] text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                }`}
+                disabled={isLoading}
               >
-                Log in
+                {isLoading ? (
+                  <>
+                    <span className="text-white">Loading...</span>
+                    <Spinner size="text-lg" color="text-white" />
+                  </>
+                ) : (
+                  "Log in"
+                )}
               </button>
             </div>
           </form>

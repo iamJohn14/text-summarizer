@@ -8,7 +8,7 @@ const { Option } = Select;
 
 const DateRangeMenu = () => {
   const { setSummaries } = useSummaryStore();
-  const { filter, setFilter } = useViewStore();
+  const { filter, setFilter, setCurrentPage } = useViewStore();
 
   const search = filter.search;
 
@@ -21,6 +21,8 @@ const DateRangeMenu = () => {
       date: value,
       search,
     });
+
+    setCurrentPage(1);
 
     if (response.status === 200) {
       const summaries = response.data;

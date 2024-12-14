@@ -7,11 +7,14 @@ import { useSummaryStore } from "@/stores/summaryStore";
 import { useViewStore } from "@/stores/viewStore";
 import { useState } from "react";
 import axios from "axios";
+import Spinner from "@/utils/spinner";
 
 const OptionsMenu: React.FC<OptionsMenuProps> = ({ summary }) => {
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { setForEdit, setTotalDoc, totalDoc, setSummaries } = useSummaryStore();
-  const { setSelectedView, filter } = useViewStore();
+  const { setSelectedView, filter, setCurrentPage, currentPage } =
+    useViewStore();
 
   const onClick = async (e: { key: string }) => {
     if (e.key === "copy") {
@@ -28,6 +31,7 @@ const OptionsMenu: React.FC<OptionsMenuProps> = ({ summary }) => {
   };
 
   const handleConfirmDelete = async () => {
+    setIsLoading(true);
     try {
       // Call the delete API route
       const response = await axios.delete(`/api/summary/${summary.id}`);
@@ -49,17 +53,22 @@ const OptionsMenu: React.FC<OptionsMenuProps> = ({ summary }) => {
             summaries,
             total: summaries.length,
           });
+
+          const newTotalPages = Math.ceil(summaries.length / 5);
+          const newCurrentPage =
+            newTotalPages < currentPage ? currentPage - 1 : currentPage;
+          setCurrentPage(newCurrentPage);
         }
       } else {
-        // Handle any non-200 responses if necessary
         console.error("Error deleting summary.");
         openNotification("error", "Error deleting summary.");
       }
     } catch (error) {
       console.error("An error occurred during the deletion:", error);
       openNotification("error", "An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
-    setModalVisible(false);
   };
 
   const handleCancelDelete = () => {
@@ -127,6 +136,7 @@ const OptionsMenu: React.FC<OptionsMenuProps> = ({ summary }) => {
                 width: "48%",
                 height: "40px",
               }}
+              disabled={isLoading}
             >
               Cancel
             </Button>
@@ -140,8 +150,16 @@ const OptionsMenu: React.FC<OptionsMenuProps> = ({ summary }) => {
                 width: "48%",
                 height: "40px",
               }}
+              disabled={isLoading} // Disable button when loading
             >
-              Delete
+              {isLoading ? (
+                <>
+                  Deleting <Spinner color="text-white" />{" "}
+                  {/* Spinner appears after "Delete" */}
+                </>
+              ) : (
+                "Delete"
+              )}
             </Button>
           </div>
         }

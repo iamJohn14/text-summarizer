@@ -20,6 +20,7 @@ const HistoryView: React.FC = () => {
   // Calculate start and end index for displaying entries
   const startIndex = (currentPage - 1) * pageSize; // Correct starting index
   const endIndex = Math.min(currentPage * pageSize, total); // Ensure it doesn't go past total
+  const currentIndex = total > 0 ? startIndex + 1 : 0;
 
   // Get the summaries for the current page
   const summariesToDisplay = summaries.slice(startIndex, endIndex);
@@ -73,7 +74,7 @@ const HistoryView: React.FC = () => {
       {/* Pagination */}
       <div className="flex justify-between font-caption mt-auto pb-5">
         <div className="text-gray-500">
-          Show {startIndex + 1} to {endIndex} of {total} entries
+          Show {currentIndex} to {endIndex} of {total} entries
         </div>
         <Pagination
           defaultCurrent={1}
@@ -81,6 +82,7 @@ const HistoryView: React.FC = () => {
           total={total}
           pageSize={pageSize}
           onChange={(page) => setCurrentPage(page)}
+          disabled={total === 0}
         />
       </div>
     </div>

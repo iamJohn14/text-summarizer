@@ -1,6 +1,7 @@
 import { useSummaryStore } from "@/stores/summaryStore";
 import { useViewStore } from "@/stores/viewStore";
 import { openNotification } from "@/utils/notification";
+import Spinner from "@/utils/spinner";
 import axios from "axios";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -64,6 +65,8 @@ const SummarizerView = () => {
 
       if (response.status === 200) {
         setSummary(data.summary);
+        setTotalDoc(totalDoc + 1);
+        setIsLoading(false);
 
         if (id) {
           const updateResponse = await axios.put(`/api/summary/${id}`, {
@@ -83,7 +86,8 @@ const SummarizerView = () => {
           });
 
           if (response.status === 200) {
-            setTotalDoc(totalDoc + 1);
+            setForEdit(addResponse.data.id);
+            setId(addResponse.data.id);
           } else {
             throw new Error(
               `Failed to add summary: ${addResponse.status} ${addResponse.statusText}`
@@ -115,10 +119,6 @@ const SummarizerView = () => {
     openNotification("success", "Copied to Clipboard!");
     navigator.clipboard.writeText(summary);
   };
-
-  const spinner = () => (
-    <div className="inline-block animate-spin h-5 w-5 border-4 border-t-transparent rounded-full"></div>
-  );
 
   useEffect(() => {
     if (forEdit) {
@@ -237,7 +237,12 @@ const SummarizerView = () => {
             {text && (
               <button
                 onClick={handleReset}
-                className="flex items-center p-2 rounded-lg font-caption bg-[#14151a] text-white border border-white hover:bg-gray-800"
+                disabled={isLoading}
+                className={`flex items-center p-2 rounded-lg font-caption ${
+                  isLoading
+                    ? "bg-[#2d2d2d] cursor-not-allowed border-[#2d2d2d]" // Muted disabled background color
+                    : "bg-[#14151a] text-white border border-white hover:bg-gray-800"
+                }`}
               >
                 <Image
                   src="/images/reset.png"
@@ -251,16 +256,22 @@ const SummarizerView = () => {
               </button>
             )}
             <button
-              disabled={text.trim() === ""}
+              disabled={text.trim() === "" || isLoading}
               onClick={handleSummarize}
               className={`p-2 rounded-lg font-caption ${
                 text.trim() === ""
                   ? "bg-gray-300 cursor-not-allowed"
                   : "bg-white hover:bg-[#d7d7d7] text-[#14151a]"
-              }`}
+              } flex items-center justify-center`}
             >
-              {isLoading && spinner()} {/* Render spinner if loading */}
-              {isLoading ? "Loading..." : "Summarize My Text"}
+              {isLoading ? (
+                <>
+                  <span className="mr-2">Summarize My Text</span>{" "}
+                  <Spinner size="text-lg" color="text-[#14151a]" />
+                </>
+              ) : (
+                "Summarize My Text"
+              )}
             </button>
           </div>
         </div>

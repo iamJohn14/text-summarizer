@@ -8,7 +8,7 @@ import { useViewStore } from "@/stores/viewStore";
 const SearchSummary = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { setSummaries } = useSummaryStore();
-  const { filter, setFilter } = useViewStore();
+  const { filter, setFilter, setCurrentPage } = useViewStore();
 
   const date = filter.date;
 
@@ -31,6 +31,8 @@ const SearchSummary = () => {
           date,
           search: value,
         });
+
+        setCurrentPage(1);
       }
     } catch (error) {
       console.error("Error fetching summary data:", error);
