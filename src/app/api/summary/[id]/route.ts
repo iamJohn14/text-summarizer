@@ -8,6 +8,10 @@ export async function PUT(req: NextRequest) {
     // Get the token from cookies
     const token = req.cookies.get("token");
 
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     // Verify the user using the token and extract the user ID from the token
     const decodedToken = await validateToken(token?.value as string);
 
