@@ -9,6 +9,7 @@ import { useSummaryStore } from "@/stores/summaryStore";
 import { Button, Input } from "antd";
 import { openNotification } from "@/utils/notification";
 import Spinner from "@/utils/spinner";
+import { useViewStore } from "@/stores/viewStore";
 
 const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -16,6 +17,7 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const { user, login } = useUserStore();
   const { setSummaries, setTotalDoc } = useSummaryStore();
+  const { setCurrentPage } = useViewStore();
   const router = useRouter();
 
   // Check if the user is already authenticated and redirect if true
@@ -58,13 +60,21 @@ const LoginPage: React.FC = () => {
           id: user.id,
         });
 
-        // Fetch additional user-related data after login (e.g., user history, profile data)
-        const summaryResponse = await axios.get("/api/summary", {
+        // Fetch summaries to get total summaries
+        const summaryTotalResponse = await axios.get("/api/summary", {
           params: { date: ">60days" },
         });
 
+        // Fetch summaries for default "Today"
+        const summaryResponse = await axios.get("/api/summary", {
+          params: { date: "today" },
+        });
+
         // Optionally, handle the summary data
-        if (summaryResponse.status === 200) {
+        if (
+          summaryResponse.status === 200 &&
+          summaryTotalResponse.status === 200
+        ) {
           const summaries = summaryResponse.data;
 
           // Store summaries if needed in the store or use them in the component
@@ -72,9 +82,8 @@ const LoginPage: React.FC = () => {
             summaries,
             total: summaries.length,
           });
-
-          // Store the total number of summaries
-          setTotalDoc(summaries.length);
+          setTotalDoc(summaryTotalResponse.data.length);
+          setCurrentPage(1);
 
           // Redirect to the home page
           router.push("/home");

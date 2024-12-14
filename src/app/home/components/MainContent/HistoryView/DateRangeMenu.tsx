@@ -38,7 +38,7 @@ const DateRangeMenu = () => {
     <div className="flex items-center space-x-2 pb-4 lg:pb-0">
       {/* Dropdown */}
       <Select
-        defaultValue=">60days"
+        defaultValue="today"
         placeholder="Select Date Range"
         className="rounded-2xl w-64"
         onChange={handleDateRangeChange}
