@@ -8,7 +8,7 @@ export const useViewStore = create<ViewStore>()(
       selectedView: "home",
       currentPage: 1,
       filter: {
-        date: ">60days",
+        date: "today",
         search: "",
       },
       trigger: false,
