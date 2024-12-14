@@ -1,4 +1,6 @@
-import type { Metadata } from "next";
+/* eslint-disable @next/next/no-page-custom-font */
+// app/layout.tsx
+import { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -57,13 +59,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/images/logo.png" />
+        {/* Preload Inter font */}
+        <link
+          rel="preload"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
       </head>
       <body className="antialiased">{children}</body>
     </html>
