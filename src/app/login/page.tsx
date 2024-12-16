@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import { useUserStore } from "@/stores/userStore";
-import { User } from "@/types/types";
+import { Summary, User } from "@/types/types";
 import { useRouter } from "next/navigation";
 import { useSummaryStore } from "@/stores/summaryStore";
 import { Button, Input } from "antd";
@@ -17,7 +17,7 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const { user, login } = useUserStore();
   const { setSummaries, setTotalDoc } = useSummaryStore();
-  const { setCurrentPage } = useViewStore();
+  const { setCurrentPage, setSelectedDate } = useViewStore();
   const router = useRouter();
 
   // Check if the user is already authenticated and redirect if true
@@ -44,7 +44,17 @@ const LoginPage: React.FC = () => {
           "Login Successful",
           "You will be redirected shortly"
         );
-        const { token, user }: { token: string; user: User } = response.data;
+        const {
+          token,
+          user,
+          totalDoc,
+          summaries,
+        }: {
+          token: string;
+          user: User;
+          totalDoc: number;
+          summaries: Summary[];
+        } = response.data;
 
         // Store the token in cookies with secure flags
         document.cookie = `token=${token}; path=/; max-age=${
@@ -60,34 +70,17 @@ const LoginPage: React.FC = () => {
           id: user.id,
         });
 
-        // Fetch summaries to get total summaries
-        const summaryTotalResponse = await axios.get("/api/summary", {
-          params: { date: ">60days" },
+        // Store summaries if needed in the store or use them in the component
+        setSummaries({
+          summaries,
+          total: summaries.length,
         });
+        setTotalDoc(totalDoc);
+        setCurrentPage(1);
+        setSelectedDate("today");
 
-        // Fetch summaries for default "Today"
-        const summaryResponse = await axios.get("/api/summary", {
-          params: { date: "today" },
-        });
-
-        // Optionally, handle the summary data
-        if (
-          summaryResponse.status === 200 &&
-          summaryTotalResponse.status === 200
-        ) {
-          const summaries = summaryResponse.data;
-
-          // Store summaries if needed in the store or use them in the component
-          setSummaries({
-            summaries,
-            total: summaries.length,
-          });
-          setTotalDoc(summaryTotalResponse.data.length);
-          setCurrentPage(1);
-
-          // Redirect to the home page
-          router.push("/home");
-        }
+        // Redirect to the home page
+        router.push("/home");
       }
     } catch (error) {
       // Check if the error is an instance of AxiosError

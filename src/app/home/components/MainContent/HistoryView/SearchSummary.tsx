@@ -8,7 +8,7 @@ import { useViewStore } from "@/stores/viewStore";
 const SearchSummary = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { setSummaries } = useSummaryStore();
-  const { filter, setFilter, setCurrentPage } = useViewStore();
+  const { filter, setFilter, setCurrentPage, selectedDate } = useViewStore();
 
   const date = filter.date;
 
@@ -28,7 +28,7 @@ const SearchSummary = () => {
         });
 
         setFilter({
-          date,
+          date: selectedDate,
           search: value,
         });
 

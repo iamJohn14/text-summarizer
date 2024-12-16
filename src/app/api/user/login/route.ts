@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { login } from "@/services/userService";
 import { cookies } from "next/headers";
+import { getStartDateForFilter } from "@/utils/dateUtils";
+import { getSummaries } from "@/services/summaryService";
+import { SummaryReturn } from "@/types/types";
+import { countChars, countWords } from "@/utils/textUtils";
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,8 +34,42 @@ export async function POST(req: NextRequest) {
       path: "/", // Make the cookie accessible to the entire domain
     });
 
+    // Fetch summaries of whole data
+    const totalSummaries: SummaryReturn[] = await getSummaries({
+      userId: user.id,
+    });
+
+    // Fetch summaries filtered today as default
+    const filteredSummaries: SummaryReturn[] = await getSummaries({
+      userId: user.id,
+      startDate: getStartDateForFilter("today"),
+      searchStr: "",
+    });
+
+    const formattedSummaries = filteredSummaries.map((summary) => {
+      const wordCount = countWords(summary.summary);
+      const charCount = countChars(summary.summary);
+
+      return {
+        id: summary.id,
+        content: summary.content,
+        summary: summary.summary,
+        charCount,
+        wordCount,
+        createdAt: summary.createdAt,
+      };
+    });
+
     // Return the response with user data and token
-    return NextResponse.json({ token, user }, { status: 200 });
+    return NextResponse.json(
+      {
+        token,
+        user,
+        totalDoc: totalSummaries.length,
+        summaries: formattedSummaries,
+      },
+      { status: 200 }
+    );
   } catch (error: unknown) {
     console.error(error);
     return NextResponse.json(

@@ -20,6 +20,7 @@ export interface Filter {
 }
 export interface ViewStore {
   selectedView: string;
+  selectedDate: string;
   currentPage: number;
   filter: {
     date: string;
@@ -27,6 +28,7 @@ export interface ViewStore {
   };
   trigger: boolean;
   setSelectedView: (view: string) => void;
+  setSelectedDate: (date: string) => void;
   setCurrentPage: (page: number) => void;
   setFilter: (filter: { date: string; search: string }) => void;
   setTrigger: (value: boolean) => void;

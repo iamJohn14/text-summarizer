@@ -8,7 +8,8 @@ const { Option } = Select;
 
 const DateRangeMenu = () => {
   const { setSummaries } = useSummaryStore();
-  const { filter, setFilter, setCurrentPage } = useViewStore();
+  const { filter, setFilter, setCurrentPage, selectedDate, setSelectedDate } =
+    useViewStore();
 
   const search = filter.search;
 
@@ -23,6 +24,7 @@ const DateRangeMenu = () => {
     });
 
     setCurrentPage(1);
+    setSelectedDate(value);
 
     if (response.status === 200) {
       const summaries = response.data;
@@ -38,7 +40,7 @@ const DateRangeMenu = () => {
     <div className="flex items-center space-x-2 pb-4 lg:pb-0">
       {/* Dropdown */}
       <Select
-        defaultValue="today"
+        value={selectedDate}
         placeholder="Select Date Range"
         className="rounded-2xl w-64"
         onChange={handleDateRangeChange}
